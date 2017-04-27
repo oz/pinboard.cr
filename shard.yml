@@ -1,0 +1,9 @@
+name: pinboard
+version: 0.1.0
+
+authors:
+  - Arnaud Berthomier <oz@cypr.io>
+
+crystal: 0.20.5
+
+license: MIT
