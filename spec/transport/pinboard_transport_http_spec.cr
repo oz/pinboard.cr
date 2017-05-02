@@ -6,9 +6,10 @@ describe Pinboard::Transport::HTTP do
   it "builds URL correctly" do
     params = {
       "foo" => "bar",
-      "bool" => "false"
+      "bool" => false,
+      "array" => %w(foo bar baz)
     }
     url = transport.build_url("/test", params)
-    url.should eq("https://api.pinboard.in/v1/test?foo=bar&bool=false&format=json&auth_token=test")
+    url.should eq("https://api.pinboard.in/v1/test?foo=bar&bool=no&array=foo%2Cbar%2Cbaz&format=json&auth_token=test")
   end
 end

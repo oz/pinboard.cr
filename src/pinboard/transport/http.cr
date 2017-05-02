@@ -3,6 +3,8 @@ require "http/client"
 require "time"
 
 require "./base"
+require "./query_params"
+require "./http/params"
 
 module Pinboard
   module Transport
@@ -17,13 +19,14 @@ module Pinboard
         get path, {} of String => String
       end
 
-      def get(path : String, params : Hash(_, _))
+      def get(path : String, params : Hash)
         url = build_url(path, params)
         res = ::HTTP::Client.get(url)
         res.body
       end
 
-      def build_url(path : String, params : Hash(_, _)) : String
+      def build_url(path : String, raw_params : Hash) : String
+        params = QueryParams.encode(raw_params)
         params["format"] = "json"
         params["auth_token"] = token
         query = ::HTTP::Params.encode(params)
