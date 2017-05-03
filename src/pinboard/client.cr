@@ -2,12 +2,10 @@ require "time"
 
 require "./post"
 require "./transport"
-#require "./params"
 
 module Pinboard
   class Client
     property :transport
-    #include Params
 
     def initialize(token : String, @transport : Transport::Base = Transport::HTTP.new)
       @transport.token = token
