@@ -22,6 +22,7 @@ module Pinboard
       def get(path : String, params : Hash)
         url = build_url(path, params)
         res = ::HTTP::Client.get(url)
+        p res
         res.body
       end
 

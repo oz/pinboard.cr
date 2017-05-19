@@ -18,10 +18,15 @@ module Pinboard
       Time::Format.new("%FT%TZ").parse json["update_time"].to_s
     end
 
-    # Get a single Post by URL
-    def get(url : String) : Post
+    # Get a single Post by URL.
+    def get(url : String) : Post | Nil
       res = transport.get "/posts/get", {"url" => url}
-      PostResponse.from_json(res).posts.first
+      posts = PostResponse.from_json(res).posts
+      if posts.empty?
+        nil
+      else
+        posts.first
+      end
     end
 
     # Find posts by tag, or date.
@@ -30,7 +35,7 @@ module Pinboard
       PostResponse.from_json(res).posts
     end
 
-    # Returns a list of the user's most recent posts (default: 15)
+    # Returns a list of the user's most recent posts (default: 15).
     def recent : Array(Post)
       res = transport.get "/posts/recent"
       PostResponse.from_json(res).posts
@@ -42,6 +47,13 @@ module Pinboard
       params["tag"] = tags unless tags.empty?
       res = transport.get "/posts/recent", params
       PostResponse.from_json(res).posts
+    end
+
+    # Delete a bookmark by URL.
+    def delete(url : String)
+      res = transport.get "/posts/delete", {"url" => url}
+      code = JSON.parse(res)["result_code"]
+      code == "done"
     end
 
     def posts

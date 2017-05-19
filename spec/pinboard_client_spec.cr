@@ -18,9 +18,16 @@ describe Pinboard::Client do
   end
 
   describe "#get" do
+    it "should be nil when post is not found" do
+      transport.mock("/posts/get", Fixtures::EMPTY_POSTS) do
+        post = client.get("https://no-such-bookmark.com")
+        post.should be_nil
+      end
+    end
+
     it "should return post details when passed a single URL" do
       transport.mock("/posts/get", Fixtures::SINGLE_POST) do
-        post = client.get("https://www.crystal-lang.org")
+        post = client.get("https://www.crystal-lang.org").as(Pinboard::Post)
         post.should be_a Pinboard::Post
         post.time.should be_a Time
         post.shared.should be_true
@@ -53,6 +60,20 @@ describe Pinboard::Client do
     it "should accept a limit for post count" do
       transport.mock("/posts/recent", Fixtures::EMPTY_POSTS) do
         client.recent(count: 42).should be_a Array(Pinboard::Post)
+      end
+    end
+  end
+
+  describe "#delete" do
+    it "should be true when URL is found" do
+      transport.mock("/posts/delete", Fixtures::DONE) do
+        client.delete("http://someurl.com").should be_true
+      end
+    end
+
+    it "should be false when URL is not found" do
+      transport.mock("/posts/delete", Fixtures::ITEM_NOT_FOUND) do
+        client.delete("http://someurl.com").should be_false
       end
     end
   end

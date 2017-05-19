@@ -59,4 +59,14 @@ module Fixtures
       "posts": []
     }
   )
+
+  # Nope!
+  ITEM_NOT_FOUND = %({
+    "result_code": "item not found"
+  })
+
+  # Done!
+  DONE = %({
+    "result_code": "done"
+  })
 end
