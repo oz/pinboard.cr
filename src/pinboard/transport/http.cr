@@ -5,6 +5,7 @@ require "time"
 require "./base"
 require "./query_params"
 require "./http/params"
+require "../error"
 
 module Pinboard
   module Transport
@@ -22,7 +23,7 @@ module Pinboard
       def get(path : String, params : Hash)
         url = build_url(path, params)
         res = ::HTTP::Client.get(url)
-        p res
+        raise Pinboard::ServerError.new(res.status_message) if res.status_code >= 500
         res.body
       end
 
