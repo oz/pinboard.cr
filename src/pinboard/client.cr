@@ -1,7 +1,8 @@
 require "time"
 
 require "./post"
-require "./date"
+require "./post_list"
+require "./date_list"
 require "./transport"
 
 module Pinboard
@@ -45,7 +46,7 @@ module Pinboard
     # Get a single Post by URL.
     def get(url : String) : Post | Nil
       res = transport.get "/posts/get", {"url" => url}
-      posts = PostResponse.from_json(res).posts
+      posts = PostList.from_json(res).posts
       if posts.empty?
         nil
       else
@@ -56,7 +57,7 @@ module Pinboard
     # Find posts by tag, or date.
     def get(date : Time, tags : Array(String), meta : Bool = false) : Array(Post)
       res = transport.get "/posts/get", {"dt" => date, "tag" => tags, "meta" => meta}
-      PostResponse.from_json(res).posts
+      PostList.from_json(res).posts
     end
 
     def dates(tags : Array(String) = [] of String) : Pinboard::DateList
@@ -69,7 +70,7 @@ module Pinboard
     # Returns a list of the user's most recent posts (default: 15).
     def recent : Array(Post)
       res = transport.get "/posts/recent"
-      PostResponse.from_json(res).posts
+      PostList.from_json(res).posts
     end
 
     # Returns a list of the user's most recent posts, filtered by tag.
@@ -77,7 +78,7 @@ module Pinboard
       params = {"count" => count} of String => (Int32 | Array(String))
       params["tag"] = tags unless tags.empty?
       res = transport.get "/posts/recent", params
-      PostResponse.from_json(res).posts
+      PostList.from_json(res).posts
     end
 
     def posts

@@ -78,12 +78,4 @@ module Pinboard
       value.read_string.split(" ")
     end
   end
-
-  struct PostResponse
-    JSON.mapping({
-      date: { type: Time, converter: TIME_CONVERTER },
-      user: String,
-      posts: Array(Post)
-    })
-  end
 end
