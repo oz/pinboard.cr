@@ -117,4 +117,14 @@ describe Pinboard::Client do
       end
     end
   end
+
+  describe "#dates" do
+    it "should be return a DateList" do
+      transport.mock("/posts/dates", Fixtures::DATE_LIST) do
+        list = client.dates(%w(crystal))
+        list.should be_a Pinboard::DateList
+        list.dates.size.should eq 3
+      end
+    end
+  end
 end

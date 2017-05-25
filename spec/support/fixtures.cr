@@ -74,4 +74,15 @@ module Fixtures
   ITEM_EXISTS = %({
     "result_code": "item already exists"
   })
+
+  # A bunch of dates where user bookmarked URL with the tag "crystal"
+  DATE_LIST = %({
+    "user": "oz",
+    "tag": "crystal",
+    "dates": {
+      "2017-05-25":"3",
+      "2017-05-24":"2",
+      "2017-05-23":"1"
+    }
+  })
 end

@@ -1,6 +1,7 @@
 require "time"
 
 require "./post"
+require "./date"
 require "./transport"
 
 module Pinboard
@@ -16,6 +17,29 @@ module Pinboard
       res = transport.get "/posts/update"
       json = JSON.parse res
       Time::Format.new("%FT%TZ").parse json["update_time"].to_s
+    end
+
+    # Add a bookmark, but don't replace if it already existed.
+    def add(post : Post) : Bool
+      post.replace = false
+      res = transport.get "/posts/add", post.to_h
+      code = JSON.parse(res)["result_code"]
+      code == "done"
+    end
+
+    # Add a bookmark, always replacing it.
+    def add!(post : Post) : Bool
+      post.replace = true
+      res = transport.get "/posts/add", post.to_h
+      code = JSON.parse(res)["result_code"]
+      code == "done"
+    end
+
+    # Delete a bookmark by URL.
+    def delete(url : String)
+      res = transport.get "/posts/delete", {"url" => url}
+      code = JSON.parse(res)["result_code"]
+      code == "done"
     end
 
     # Get a single Post by URL.
@@ -35,6 +59,13 @@ module Pinboard
       PostResponse.from_json(res).posts
     end
 
+    def dates(tags : Array(String) = [] of String) : Pinboard::DateList
+      params = {} of String => Array(String)
+      params["tag"] = tags unless tags.empty?
+      res = transport.get "/posts/dates", params
+      Pinboard::DateList.from_json(res)
+    end
+
     # Returns a list of the user's most recent posts (default: 15).
     def recent : Array(Post)
       res = transport.get "/posts/recent"
@@ -47,29 +78,6 @@ module Pinboard
       params["tag"] = tags unless tags.empty?
       res = transport.get "/posts/recent", params
       PostResponse.from_json(res).posts
-    end
-
-    # Delete a bookmark by URL.
-    def delete(url : String)
-      res = transport.get "/posts/delete", {"url" => url}
-      code = JSON.parse(res)["result_code"]
-      code == "done"
-    end
-
-    # Add a bookmark, but don't replace if it already existed.
-    def add(post : Post) : Bool
-      post.replace = false
-      res = transport.get "/posts/add", post.to_h
-      code = JSON.parse(res)["result_code"]
-      code == "done"
-    end
-
-    # Add a bookmark, always replacing it.
-    def add!(post : Post) : Bool
-      post.replace = true
-      res = transport.get "/posts/add", post.to_h
-      code = JSON.parse(res)["result_code"]
-      code == "done"
     end
 
     def posts
