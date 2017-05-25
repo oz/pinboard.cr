@@ -69,4 +69,9 @@ module Fixtures
   DONE = %({
     "result_code": "done"
   })
+
+  # Item already exists
+  ITEM_EXISTS = %({
+    "result_code": "item already exists"
+  })
 end

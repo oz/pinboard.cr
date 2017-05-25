@@ -77,4 +77,44 @@ describe Pinboard::Client do
       end
     end
   end
+
+  describe "#add" do
+    it "should be true when Bookmark is added" do
+      transport.mock("/posts/add", Fixtures::DONE) do
+        post = Pinboard::Post.new(url: "http://example.com",
+                                  title: "Example site")
+        client.add(post).should be_true
+      end
+    end
+
+    it "should be false when Bookmark already exist" do
+      transport.mock("/posts/add", Fixtures::ITEM_EXISTS) do
+        post = Pinboard::Post.new(url: "http://example.com",
+                                  title: "Example site")
+        client.add(post).should be_false
+      end
+    end
+
+    it "should be true with tags and other params" do
+      transport.mock("/posts/add", Fixtures::DONE) do
+        post = Pinboard::Post.new(url: "http://example.com",
+                                  title: "Example site",
+                                  description: "So much text...",
+                                  shared: false,
+                                  tags: %w(foo bar baz))
+        client.add(post).should be_true
+      end
+    end
+  end
+
+  describe "#add!" do
+    it "should be true even if bookmark exist" do
+      transport.mock("/posts/add", Fixtures::DONE) do
+        post = Pinboard::Post.new(url: "http://example.com",
+                                  title: "Example site")
+        client.add!(post).should be_true
+        client.add!(post).should be_true
+      end
+    end
+  end
 end

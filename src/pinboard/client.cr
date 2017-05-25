@@ -56,6 +56,22 @@ module Pinboard
       code == "done"
     end
 
+    # Add a bookmark, but don't replace if it already existed.
+    def add(post : Post) : Bool
+      post.replace = false
+      res = transport.get "/posts/add", post.to_h
+      code = JSON.parse(res)["result_code"]
+      code == "done"
+    end
+
+    # Add a bookmark, always replacing it.
+    def add!(post : Post) : Bool
+      post.replace = true
+      res = transport.get "/posts/add", post.to_h
+      code = JSON.parse(res)["result_code"]
+      code == "done"
+    end
+
     def posts
       [] of Post
     end
