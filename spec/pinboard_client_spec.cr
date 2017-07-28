@@ -127,4 +127,33 @@ describe Pinboard::Client do
       end
     end
   end
+
+  describe "#posts" do
+    it "should return an Array of posts" do
+      transport.mock("/posts/all", Fixtures::ALL_POSTS) do
+        client.posts.should be_a Array(Pinboard::Post)
+      end
+    end
+
+    it "should filter posts by tag" do
+      transport.mock("/posts/all", Fixtures::ALL_POSTS) do
+        client.posts(tags: %w(one two three)).should be_a Array(Pinboard::Post)
+      end
+    end
+
+    it "should accept a page to paginate results" do
+      transport.mock("/posts/all", Fixtures::ALL_POSTS) do
+        client.posts(page: 42).should be_a Array(Pinboard::Post)
+      end
+    end
+
+    it "should accept dates to limit results in time" do
+      transport.mock("/posts/all", Fixtures::ALL_POSTS) do
+        start_at = Time.now
+        end_at = Time.new(2050, 1, 1, 10, 10, 10)
+        client.posts(page: 42, start_at: start_at).should be_a Array(Pinboard::Post)
+        client.posts(page: 42, start_at: start_at, end_at: start_at).should be_a Array(Pinboard::Post)
+      end
+    end
+  end
 end

@@ -60,6 +60,33 @@ module Fixtures
     }
   )
 
+  # Sample response for /posts/all
+  ALL_POSTS = %([
+      {
+        "href": "https://usehelix.com/",
+        "description": "Helix: Native Ruby Extensions Without Fear",
+        "extended": "",
+        "meta": "430d74348480b4f240aad85552c9a458",
+        "hash": "4e21a8400ced5737c77b22a4cf144dd8",
+        "time": "2017-05-02T09:38:42Z",
+        "shared": "yes",
+        "toread": "no",
+        "tags": "ruby rust programming"
+      },
+      {
+        "href": "https://github.com/Amber-Crystal/amber",
+        "description": "Amber-Crystal/amber: Amber is an open source efficient and cohesive web application framework developed for the Crystal language",
+        "extended": "",
+        "meta": "a1d03505c583f065e3c9105ee2881758",
+        "hash": "ae15da4c307c50577ccc7295105d294c",
+        "time": "2017-05-02T09:22:12Z",
+        "shared": "yes",
+        "toread": "no",
+        "tags": "programming crystal web framework"
+      }
+    ]
+  )
+
   # Nope!
   ITEM_NOT_FOUND = %({
     "result_code": "item not found"
