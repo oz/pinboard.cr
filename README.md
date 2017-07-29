@@ -1,6 +1,6 @@
 # pinboard
 
-A crystal client for [Pinboard] API.
+A crystal client for the [Pinboard] API.
 
 ## Installation
 
@@ -9,7 +9,7 @@ Add this to your application's `shard.yml`:
 ```yaml
 dependencies:
   pinboard:
-    github: [your-github-name]/pinboard
+    git: https://git.cypr.io/oz/pinboard.cr.git
 ```
 
 ## Usage
@@ -18,23 +18,29 @@ dependencies:
 require "pinboard"
 
 pinboard = Pinboard::Client.new(token: "my secret token")
-posts = pinboard.posts
+posts = pinboard.recent
+if posts.is_a?(Pinboard::Error)
+  puts posts.to_s
+else
+  posts.each do |post|
+    puts "#{post.title}\n  url:#{post.url}\n  tags: #{post.tags.join(",")}\n"
+  end
+end
 ```
 
-## Development
-
-TODO: Write development instructions here
+Pinboard returns either a `Pinboard::Error`, or something else. Check the tests
+to be sure.
 
 ## Contributing
 
-1. Fork it ( https://github.com/[your-github-name]/pinboard/fork )
-2. Create your feature branch (git checkout -b my-new-feature)
-3. Commit your changes (git commit -am 'Add some feature')
-4. Push to the branch (git push origin my-new-feature)
-5. Create a new Pull Request
+1. Clone `https://git.cypr.io/oz/pinboard.cr.git`,
+2. Create your feature branch (`git checkout -b my-new-feature`),
+3. Commit your changes (`git commit -am 'Add some feature'`),
+4. Create a patch (`git format-patch origin`),
+5. Send patch to `oz@cypr.io`.
 
 ## Contributors
 
-- [[your-github-name]](https://github.com/[your-github-name]) Arnaud Berthomier - creator, maintainer
+- [oz](https://github.com/oz) Arnaud Berthomier - creator, maintainer
 
 [Pinboard]: https://pinboard.in/
