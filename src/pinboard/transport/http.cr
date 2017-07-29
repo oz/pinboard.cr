@@ -12,9 +12,14 @@ module Pinboard
     class HTTP < Base
       BASE_URL = "https://api.pinboard.in/v1"
 
-      property :token
+      property :token, :client
 
-      def initialize(@token = ""); end
+      def initialize(@token = "")
+        host = URI.parse(BASE_URL).host.as(String)
+        @client = ::HTTP::Client.new(host)
+        @client.connect_timeout = 5.seconds
+        @client.read_timeout = 10.seconds
+      end
 
       def get(path : String)
         get path, {} of String => String
@@ -22,7 +27,7 @@ module Pinboard
 
       def get(path : String, params : Hash)
         url = build_url(path, params)
-        res = ::HTTP::Client.get(url)
+        res = client.get(url)
         raise Pinboard::ServerError.new(res.status_message) if res.status_code >= 500
         res.body
       end

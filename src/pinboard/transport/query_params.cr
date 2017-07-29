@@ -4,7 +4,7 @@ module Pinboard
       def self.encode(h : Hash(_, _)) : Hash(String, String)
         encoded = {} of String => String
         h.each do |key, value|
-          encoded[key] = encode_value value
+          encoded[key] = encode_value value unless value.nil?
         end
         encoded
       end

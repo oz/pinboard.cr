@@ -1,31 +1,36 @@
 require "time"
 
+require "./error"
+require "./transport"
 require "./post"
 require "./post_list"
 require "./date_list"
-require "./transport"
 
 module Pinboard
   class Client
     property :transport
 
-    def initialize(token : String, @transport : Transport::Base = Transport::HTTP.new)
+    def initialize(token, @transport : Transport::Base = Transport::HTTP.new)
       @transport.token = token
     end
 
     # Returns the most recent time a bookmark was added, updated or deleted.
-    def last_update : Time
+    def last_update
       res = transport.get "/posts/update"
       json = JSON.parse res
       Time::Format.new("%FT%TZ").parse json["update_time"].to_s
+    rescue e
+      Error.new(cause: e)
     end
 
     # Add a bookmark, but don't replace if it already existed.
-    def add(post : Post) : Bool
+    def add(post : Post)
       post.replace = false
       res = transport.get "/posts/add", post.to_h
       code = JSON.parse(res)["result_code"]
       code == "done"
+    rescue e
+      Error.new(cause: e)
     end
 
     # Add a bookmark, always replacing it.
@@ -34,6 +39,8 @@ module Pinboard
       res = transport.get "/posts/add", post.to_h
       code = JSON.parse(res)["result_code"]
       code == "done"
+    rescue e
+      Error.new(cause: e)
     end
 
     # Delete a bookmark by URL.
@@ -41,6 +48,8 @@ module Pinboard
       res = transport.get "/posts/delete", {"url" => url}
       code = JSON.parse(res)["result_code"]
       code == "done"
+    rescue e
+      Error.new(cause: e)
     end
 
     # Get a single Post by URL.
@@ -52,42 +61,45 @@ module Pinboard
       else
         posts.first
       end
+    rescue e
+      Error.new(cause: e)
     end
 
     # Find posts by tag, or date.
-    def get(date : Time, tags : Array(String), meta : Bool = false)
+    def get(date : Time? = nil, tags : Array(String)? = nil, meta = false)
       res = transport.get "/posts/get", {"dt" => date, "tag" => tags, "meta" => meta}
       PostList.from_json(res).posts
+    rescue e
+      Error.new(cause: e)
     end
 
-    def dates(tags : Array(String) = [] of String)
-      params = {} of String => Array(String)
-      params["tag"] = tags unless tags.empty?
-      res = transport.get "/posts/dates", params
+    def dates(tags = nil)
+      res = transport.get "/posts/dates", {"tag" => tags}
       Pinboard::DateList.from_json(res)
-    end
-
-    # Returns a list of the user's most recent posts (default: 15).
-    def recent
-      res = transport.get "/posts/recent"
-      PostList.from_json(res).posts
+    rescue e
+      Error.new(cause: e)
     end
 
     # Returns a list of the user's most recent posts, filtered by tag.
-    def recent(tags : Array = [] of String, count : Int32 = 15)
-      params = {"count" => count} of String => (Int32 | Array(String))
-      params["tag"] = tags unless tags.empty?
+    def recent(tags = nil, count = 15)
+      params = {"tag" => tags, "count" => count}
       res = transport.get "/posts/recent", params
       PostList.from_json(res).posts
+    rescue e
+      Error.new(cause: e)
     end
 
-    def posts(tags : Array = [] of String, page : Int32 = 0, start_at : Time? = nil, end_at : Time? = nil)
-      params = {"start" => page} of String => (Int32 | Array(String) | Time? | String)
-      params["tag"] = tags unless tags.empty?
-      params["fromdt"] = start_at unless start_at.nil?
-      params["todt"] = end_at unless start_at.nil?
+    def posts(tags = nil, page = 0, start_at = nil, end_at = nil)
+      params = {
+        "start"  => page,
+        "tag"    => tags,
+        "fromdt" => start_at,
+        "todt"   => end_at,
+      }
       res = transport.get "/posts/all", params
-      Array(Pinboard::Post).from_json(res)
+      Array(Pinboard::Post).from_json res
+    rescue e
+      Error.new(cause: e)
     end
   end
 end

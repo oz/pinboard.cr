@@ -15,6 +15,12 @@ describe Pinboard::Client do
         client.last_update.should eq(dt)
       end
     end
+
+    it "should return a Pinboard::Error on errors..." do
+      transport.mock("/posts/update", "BAD JSON") do
+        client.last_update.should be_a(Pinboard::Error)
+      end
+    end
   end
 
   describe "#get" do
@@ -40,6 +46,19 @@ describe Pinboard::Client do
       transport.mock("/posts/get", Fixtures::SEVERAL_POSTS) do
         posts = client.get(date: Time.now, tags: %w(foo bar))
         posts.should be_a Array(Pinboard::Post)
+        posts.as?(Array(Pinboard::Post)).try(&.first).should be_a Pinboard::Post
+
+        posts = client.get(date: Time.now)
+        posts.should be_a Array(Pinboard::Post)
+        posts.as?(Array(Pinboard::Post)).try(&.first).should be_a Pinboard::Post
+
+        posts = client.get(tags: %w(foo bar))
+        posts.should be_a Array(Pinboard::Post)
+        posts.as?(Array(Pinboard::Post)).try(&.first).should be_a Pinboard::Post
+
+        posts = client.get
+        posts.should be_a Array(Pinboard::Post)
+        posts.as?(Array(Pinboard::Post)).try(&.first).should be_a Pinboard::Post
       end
     end
   end
@@ -123,7 +142,7 @@ describe Pinboard::Client do
       transport.mock("/posts/dates", Fixtures::DATE_LIST) do
         list = client.dates(%w(crystal))
         list.should be_a Pinboard::DateList
-        list.dates.size.should eq 3
+        list.as(Pinboard::DateList).dates.size.should eq 3
       end
     end
   end
@@ -143,7 +162,9 @@ describe Pinboard::Client do
 
     it "should accept a page to paginate results" do
       transport.mock("/posts/all", Fixtures::ALL_POSTS) do
-        client.posts(page: 42).should be_a Array(Pinboard::Post)
+        posts = client.posts page: 42
+        posts.should be_a Array(Pinboard::Post)
+        posts.as(Array(Pinboard::Post)).first.url.should eq("https://usehelix.com/")
       end
     end
 
