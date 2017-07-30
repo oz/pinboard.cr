@@ -1,5 +1,7 @@
 # pinboard
 
+[![Build Status](https://travis-ci.org/oz/pinboard.cr.svg?branch=master)](https://travis-ci.org/oz/pinboard.cr)
+
 A crystal client for the [Pinboard] API.
 
 ## Installation
