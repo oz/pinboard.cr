@@ -1,9 +1,9 @@
 name: pinboard
-version: 0.1.0
+version: 0.2.0
 
 authors:
   - Arnaud Berthomier <oz@cypr.io>
 
-crystal: 0.20.5
+crystal: 0.23.1
 
 license: MIT
