@@ -4,7 +4,6 @@ require "time"
 
 require "./base"
 require "./query_params"
-require "./http/params"
 require "../error"
 
 module Pinboard
