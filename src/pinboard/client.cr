@@ -18,7 +18,8 @@ module Pinboard
     def last_update
       res = transport.get "/posts/update"
       json = JSON.parse res
-      Time::Format.new("%FT%TZ").parse json["update_time"].to_s
+      date_format = Time::Format.new("%FT%TZ", Time::Location.local)
+      date_format.parse json["update_time"].to_s
     rescue e
       Error.new(cause: e)
     end
