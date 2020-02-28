@@ -10,7 +10,7 @@ describe Pinboard::Client do
 
   describe "#last_update" do
     it "should return a Time" do
-      dt = Time.new(2017, 4, 20, 10, 0, 5)
+      dt = Time.local(2017, 4, 20, 10, 0, 5)
       transport.mock("/posts/update", Fixtures::UPDATE_TIME) do
         client.last_update.should eq(dt)
       end
@@ -44,11 +44,11 @@ describe Pinboard::Client do
 
     it "should return several posts when filtering with date and tags" do
       transport.mock("/posts/get", Fixtures::SEVERAL_POSTS) do
-        posts = client.get(date: Time.now, tags: %w(foo bar))
+        posts = client.get(date: Time.local, tags: %w(foo bar))
         posts.should be_a Array(Pinboard::Post)
         posts.as?(Array(Pinboard::Post)).try(&.first).should be_a Pinboard::Post
 
-        posts = client.get(date: Time.now)
+        posts = client.get(date: Time.local)
         posts.should be_a Array(Pinboard::Post)
         posts.as?(Array(Pinboard::Post)).try(&.first).should be_a Pinboard::Post
 
@@ -101,7 +101,7 @@ describe Pinboard::Client do
     it "should be true when Bookmark is added" do
       transport.mock("/posts/add", Fixtures::DONE) do
         post = Pinboard::Post.new(url: "http://example.com",
-                                  title: "Example site")
+          title: "Example site")
         client.add(post).should be_true
       end
     end
@@ -109,7 +109,7 @@ describe Pinboard::Client do
     it "should be false when Bookmark already exist" do
       transport.mock("/posts/add", Fixtures::ITEM_EXISTS) do
         post = Pinboard::Post.new(url: "http://example.com",
-                                  title: "Example site")
+          title: "Example site")
         client.add(post).should be_false
       end
     end
@@ -117,10 +117,10 @@ describe Pinboard::Client do
     it "should be true with tags and other params" do
       transport.mock("/posts/add", Fixtures::DONE) do
         post = Pinboard::Post.new(url: "http://example.com",
-                                  title: "Example site",
-                                  description: "So much text...",
-                                  shared: false,
-                                  tags: %w(foo bar baz))
+          title: "Example site",
+          description: "So much text...",
+          shared: false,
+          tags: %w(foo bar baz))
         client.add(post).should be_true
       end
     end
@@ -130,7 +130,7 @@ describe Pinboard::Client do
     it "should be true even if bookmark exist" do
       transport.mock("/posts/add", Fixtures::DONE) do
         post = Pinboard::Post.new(url: "http://example.com",
-                                  title: "Example site")
+          title: "Example site")
         client.add!(post).should be_true
         client.add!(post).should be_true
       end
@@ -170,8 +170,8 @@ describe Pinboard::Client do
 
     it "should accept dates to limit results in time" do
       transport.mock("/posts/all", Fixtures::ALL_POSTS) do
-        start_at = Time.now
-        end_at = Time.new(2050, 1, 1, 10, 10, 10)
+        start_at = Time.local
+        end_at = Time.utc(2050, 1, 1, 10, 10, 10)
         client.posts(page: 42, start_at: start_at).should be_a Array(Pinboard::Post)
         client.posts(page: 42, start_at: start_at, end_at: start_at).should be_a Array(Pinboard::Post)
       end

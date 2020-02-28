@@ -2,17 +2,17 @@ require "json"
 require "time"
 
 module Pinboard
-  TIME_FORMAT = "%FT%TZ"
+  TIME_FORMAT    = "%FT%TZ"
   TIME_CONVERTER = Time::Format.new(TIME_FORMAT)
 
   struct Post
     property url,
-             title,
-             description,
-             meta,
-             hash,
-             time,
-             tags
+      title,
+      description,
+      meta,
+      hash,
+      time,
+      tags
 
     property? toread : Bool = false
     property? shared : Bool = true
@@ -34,7 +34,7 @@ module Pinboard
       url : String,
       title : String,
       description : String = "",
-      time : Time = Time.utc_now,
+      time : Time = Time.utc,
       shared : Bool = true,
       toread : Bool = false,
       tags : Array(String) = [] of String
@@ -54,12 +54,12 @@ module Pinboard
     # @return [Hash]
     def to_h
       hash = {
-        "url" => url,
+        "url"         => url,
         "description" => title,
-        "dt" => time.to_s(TIME_FORMAT),
-        "shared" => shared? ? "yes" : "no",
-        "toread" => toread? ? "yes" : "no",
-        "replace" => replace? ? "yes" : "no"
+        "dt"          => time.to_s(TIME_FORMAT),
+        "shared"      => shared? ? "yes" : "no",
+        "toread"      => toread? ? "yes" : "no",
+        "replace"     => replace? ? "yes" : "no",
       }
       hash["extended"] = description if description != ""
       hash["tags"] = tags.join(",") unless tags.empty?
