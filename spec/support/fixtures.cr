@@ -8,7 +8,7 @@ module Fixtures
         "user":"oz",
         "posts": [
           {
-            "href":"https:\/\/www.crystal-lang.org\/",
+            "href":"https://www.crystal-lang.org/",
             "description":"The Crystal Programming Language",
             "extended":"",
             "meta":"1234567890abcdef01234567890abcde",

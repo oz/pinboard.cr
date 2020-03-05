@@ -5,7 +5,7 @@ module Pinboard
     JSON.mapping({
       user:  String,
       tag:   String,
-      dates: Hash(String, String)
+      dates: Hash(String, String),
     })
   end
 end
