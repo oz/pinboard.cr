@@ -171,7 +171,6 @@ describe Pinboard::Client do
     it "should accept dates to limit results in time" do
       transport.mock("/posts/all", Fixtures::ALL_POSTS) do
         start_at = Time.local
-        end_at = Time.utc(2050, 1, 1, 10, 10, 10)
         client.posts(page: 42, start_at: start_at).should be_a Array(Pinboard::Post)
         client.posts(page: 42, start_at: start_at, end_at: start_at).should be_a Array(Pinboard::Post)
       end
