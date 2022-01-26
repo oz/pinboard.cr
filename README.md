@@ -1,6 +1,6 @@
 # pinboard
 
-[![Build Status](https://travis-ci.org/oz/pinboard.cr.svg?branch=master)](https://travis-ci.org/oz/pinboard.cr)
+[![CI](https://github.com/oz/pinboard.cr/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/oz/pinboard.cr/actions/workflows/ci.yml)
 
 A crystal client for the [Pinboard] API.
 
