@@ -2,10 +2,10 @@ require "json"
 
 module Pinboard
   struct DateList
-    JSON.mapping({
-      user:  String,
-      tag:   String,
-      dates: Hash(String, String),
-    })
+    include JSON::Serializable
+    property user : String
+
+    property tag : String
+    property dates : Hash(String, String)
   end
 end

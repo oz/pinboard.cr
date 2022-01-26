@@ -3,10 +3,12 @@ require "./post"
 
 module Pinboard
   struct PostList
-    JSON.mapping({
-      date:  {type: Time, converter: TIME_CONVERTER},
-      user:  String,
-      posts: Array(Pinboard::Post),
-    })
+    include JSON::Serializable
+
+    @[JSON::Field(converter: Pinboard::TIME_CONVERTER)]
+    property date : Time
+
+    property user : String
+    property posts : Array(Pinboard::Post)
   end
 end

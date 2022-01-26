@@ -36,8 +36,8 @@ describe Pinboard::Client do
         post = client.get("https://www.crystal-lang.org").as(Pinboard::Post)
         post.should be_a Pinboard::Post
         post.time.should be_a Time
-        post.shared.should be_true
-        post.toread.should be_false
+        post.shared?.should be_true
+        post.toread?.should be_false
         post.tags.should eq(["programming", "languages", "crystal"])
       end
     end
